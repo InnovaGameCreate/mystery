@@ -27,7 +27,7 @@ void Menu_Finalize();//終了処理
 void Menu_Update();//更新
 void Menu_Draw();//描画
 
-				 //game.cpp
+//game.cpp
 void Game_Initialize();//初期化
 void Game_Finalize();//終了処理
 void Game_Update();//更新
