@@ -11,6 +11,14 @@ typedef enum {
 
 	eScene_None,    //–³‚µ
 } eScene;
+//fps.cpp
+extern bool fps_Update();
+extern void fps_Draw();
+extern void fps_Wait();
+
+//key.cpp
+extern int key_Update();
+extern int getKey(int key);
 
 //SceneMgr.cpp
 void SceneMgr_Initialize();//‰Šú‰»
@@ -33,8 +41,5 @@ void Game_Finalize();//I—¹ˆ—
 void Game_Update();//XV
 void Game_Draw();//•`‰æ
 
-				 //fps.cpp
-extern bool fps_Update();
-extern void fps_Draw();
-extern void fps_Wait();
+
 

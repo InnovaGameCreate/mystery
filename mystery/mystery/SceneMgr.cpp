@@ -1,6 +1,6 @@
 #include "header.h"
 
-static eScene mScene = eScene_Menu;    //シーン管理変数
+static eScene mScene = eScene_Game;    //シーン管理変数
 static eScene mNextScene = eScene_None;    //次のシーン管理変数
 
 static void SceneMgr_InitializeModule(eScene scene);//指定モジュールを初期化する
@@ -8,6 +8,7 @@ static void SceneMgr_FinalizeModule(eScene scene);//指定モジュールの終了処理を行
 
 												  //初期化
 void SceneMgr_Initialize() {
+	SetGraphMode(1024, 768, 32);
 	SceneMgr_InitializeModule(mScene);
 }
 
