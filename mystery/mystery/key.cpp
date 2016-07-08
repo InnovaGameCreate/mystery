@@ -10,6 +10,6 @@ int key_Update() {
 		else {              // ‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
 			Key[i] = 0;   // 0‚É‚·‚é
 		}
-	}
+		int a;
 	return 0;
 }
