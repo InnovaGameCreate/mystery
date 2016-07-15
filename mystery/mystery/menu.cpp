@@ -14,9 +14,11 @@ void Menu_Finalize() {
 //XV
 void Menu_Update() {
 
+
 }
 
 //•`‰æ
 void Menu_Draw() {
+
 
 }

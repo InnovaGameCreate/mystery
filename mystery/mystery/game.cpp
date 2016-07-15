@@ -1,9 +1,8 @@
 #include "header.h"
 
-
-
 //‰Šú‰»
 void Game_Initialize() {
+	int b;
 
 }
 
