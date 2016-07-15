@@ -1,4 +1,5 @@
 #include "header.h"
+static int Handle;
 
 void start_Initialize() {
 
