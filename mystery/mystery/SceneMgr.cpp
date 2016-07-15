@@ -1,6 +1,6 @@
 #include "header.h"
 
-static eScene mScene = eScene_Game;    //シーン管理変数
+static eScene mScene = eScene_Start;    //シーン管理変数
 static eScene mNextScene = eScene_None;    //次のシーン管理変数
 
 static void SceneMgr_InitializeModule(eScene scene);//指定モジュールを初期化する
@@ -26,6 +26,9 @@ void SceneMgr_Update() {
 		SceneMgr_InitializeModule(mScene);    //現在のシーンを初期化
 	}
 	switch (mScene) {       //シーンによって処理を分岐
+	case eScene_Start:       //現在の画面がスタートなら
+		start_Update();  //	スタート画面の更新処理をする
+		break;//以下略
 	case eScene_Menu:    //現在の画面がメニューなら
 		Menu_Update();   //メニュー画面の更新処理をする
 		break;//以下略
@@ -38,6 +41,9 @@ void SceneMgr_Update() {
 //描画
 void SceneMgr_Draw() {
 	switch (mScene) {      //シーンによって処理を分岐
+	case eScene_Start:       //現在の画面がスタート画面なら
+		start_Initialize();  //	スタート画面の初期化処理をする
+		break;//以下略
 	case eScene_Menu:   //現在の画面がメニュー画面なら
 		Menu_Draw();    //メニュー画面の描画処理をする
 		break;//以下略
@@ -55,6 +61,9 @@ void SceneMgr_ChangeScene(eScene NextScene) {
 // 引数sceneモジュールを初期化する
 static void SceneMgr_InitializeModule(eScene scene) {
 	switch (scene) {          //シーンによって処理を分岐
+	case eScene_Start:       //指定画面がスタート画面なら
+		start_Initialize();  //スタート画面の初期化処理をする
+		break;//以下略
 	case eScene_Menu:       //指定画面がメニュー画面なら
 		Menu_Initialize();  //メニュー画面の初期化処理をする
 		break;//以下略
@@ -68,6 +77,9 @@ static void SceneMgr_InitializeModule(eScene scene) {
 // 引数sceneモジュールの終了処理を行う
 static void SceneMgr_FinalizeModule(eScene scene) {
 	switch (scene) {         //シーンによって処理を分岐
+	case eScene_Start:       //指定画面がスタート画面なら
+		start_Finalize();  //スタート画面の終了処理処理をする
+		break;//以下略
 	case eScene_Menu:      //指定画面がメニュー画面なら
 		Menu_Finalize();   //メニュー画面の終了処理処理をする
 		break;//以下略
