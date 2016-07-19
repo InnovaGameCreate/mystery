@@ -4,7 +4,7 @@
 #include "DxLib.h"
 
 
-typedef enum { 
+typedef enum {
 	eScene_Start,   //スタート画面
 	eScene_Menu,    //メニュー画面
 	eScene_Game,    //ゲーム画面
@@ -12,6 +12,16 @@ typedef enum {
 
 	eScene_None,    //無し
 } eScene;
+
+typedef struct {
+	int x, y, w, h;	//座標　幅　高さ
+	double now;        //現在のゲージ量
+	double max;		//最大のゲージ量
+	double count;		//経過時間
+	double speed;    //ゲージのスピード    大きいほど遅い
+	int on;
+}Gauge;
+
 //fps.cpp
 extern bool fps_Update();
 extern void fps_Draw();
