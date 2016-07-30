@@ -8,7 +8,7 @@ static void SceneMgr_FinalizeModule(eScene scene);//指定モジュールの終了処理を行
 
 												  //初期化
 void SceneMgr_Initialize() {
-	SetGraphMode(1024, 768, 32);
+	SetGraphMode(WINDOW_WIDE,WINDOW_HEIGHT, 32);
 	SceneMgr_InitializeModule(mScene);
 }
 

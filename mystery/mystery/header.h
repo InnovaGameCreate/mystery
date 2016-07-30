@@ -2,7 +2,8 @@
 #pragma once
 #include <math.h>
 #include "DxLib.h"
-
+#define WINDOW_WIDE 1024
+#define WINDOW_HEIGHT 768
 
 typedef enum {
 	eScene_Start,   //スタート画面
@@ -16,11 +17,18 @@ typedef enum {
 typedef struct {
 	int x, y, w, h;	//座標　幅　高さ
 	double now;        //現在のゲージ量
-	double max;		//最大のゲージ量
-	double count;		//経過時間
-	double speed;    //ゲージのスピード    大きいほど遅い
+	int max;		//最大のゲージ量
+	int count;		//経過時間
+	int speed;    //ゲージのスピード    大きいほど遅い
 	int on;
 }Gauge;
+
+typedef struct {
+	int x, y,w,h;   //座標
+	double flytime;
+	double penaltytime;
+	double xspeed, yspeed;
+}Stone;
 
 //fps.cpp
 extern bool fps_Update();
