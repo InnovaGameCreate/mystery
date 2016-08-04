@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>リソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

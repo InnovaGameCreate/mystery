@@ -3,7 +3,7 @@
 #include <math.h>
 #include "DxLib.h"
 #define WINDOW_WIDE 1024
-#define WINDOW_HEIGHT 768
+#define WINDOW_HEIGHT 600
 
 typedef enum {
 	eScene_Start,   //スタート画面
@@ -14,14 +14,21 @@ typedef enum {
 	eScene_None,    //無し
 } eScene;
 
+//難易度
+typedef enum {
+	Easy,			//簡単
+	Normal,			//ふつう
+	Hard			//難しい
+}Level;
+
+
 typedef struct {
 	int x, y, w, h;	//座標　幅　高さ
 	double now;        //現在のゲージ量
 	int max;		//最大のゲージ量
 	int count;		//経過時間
 	int speed;    //ゲージのスピード    大きいほど遅い
-	int on;
-}Gauge;
+}Gauge_Info;
 
 typedef struct {
 	int x, y,w,h;   //座標
