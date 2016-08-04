@@ -28,8 +28,8 @@ static int backhandle[3];
 
 static int backgroundx;     //背景移動補正
 
-static int timinglimit = 300;  //着地面までの猶予幅
-static int gameoverlimit;             //ゲームオーバーまでの幅
+static double timinglimit = 300;  //着地面までの猶予幅
+static double gameoverlimit;             //ゲームオーバーまでの幅
 
 static double timingradi[3];
 //スピードの決定
@@ -63,8 +63,8 @@ void timingUpdate(Stone *samp) {
 	
 	int sa = (UNDERY < samp->y) ? samp->y - UNDERY : UNDERY - samp->y;
 	timingradi[0] = TIMINGRADI;
-	timingradi[1] = ((double)gameoverlimit / (UNDERY + timinglimit - (UNDERY - timinglimit)))*TIMINGRADI;
-	timingradi[2] = ((double)gameoverlimit / (UNDERY + timinglimit - (UNDERY - timinglimit)))*TIMINGRADI-5;
+	timingradi[1] = (gameoverlimit / (UNDERY + timinglimit - (UNDERY - timinglimit)))*TIMINGRADI;
+	timingradi[2] = (gameoverlimit / (UNDERY + timinglimit - (UNDERY - timinglimit)))*TIMINGRADI-5;
 	if (gameoverlimit <= 0) {
 		nowfaze = Result;
 		return;
