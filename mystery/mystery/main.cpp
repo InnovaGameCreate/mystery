@@ -8,6 +8,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		SceneMgr_Update();  //更新
 		SceneMgr_Draw();    //描画
 
+		key_Update();
 		fps_Update();	//更新
 		fps_Draw();		//描画
 		fps_Wait();		//待機

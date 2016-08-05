@@ -38,3 +38,5 @@ extern bool fps_Update();
 extern void fps_Draw();
 extern void fps_Wait();
 
+extern int key_Update();
+extern int Keyboard_Get(int KeyCode);
