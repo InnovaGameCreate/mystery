@@ -75,3 +75,5 @@ void Game_Draw();//•`‰æ
 
 
 
+extern int key_Update();
+extern int Keyboard_Get(int KeyCode);
