@@ -26,13 +26,13 @@ void Menu_Finalize() {
 
 //更新
 void Menu_Update() {
-	if (Keyboard_Get(KEY_INPUT_DOWN) == 1) {//下キーが押されていたら
+	if (getKey(KEY_INPUT_DOWN) == 1) {//下キーが押されていたら
 		NowSelect = (NowSelect + 1) % eMenu_Num;//選択状態を一つ下げる
 	}
-	if (Keyboard_Get(KEY_INPUT_UP) == 1) {//上キーが押されていたら
+	if (getKey(KEY_INPUT_UP) == 1) {//上キーが押されていたら
 		NowSelect = (NowSelect + (eMenu_Num - 1)) % eMenu_Num;//選択状態を一つ上げる
 	}
-	if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {//エンターキーが押されたら
+	if (getKey(KEY_INPUT_RETURN) == 1) {//エンターキーが押されたら
 		switch (NowSelect) {//現在選択中の状態によって処理を分岐
 		case eMenu_Erement://初級選択中なら
 			SceneMgr_ChangeScene(eScene_Game);//シーンをゲーム画面に変更

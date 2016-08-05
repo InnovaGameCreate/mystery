@@ -72,8 +72,3 @@ void Game_Initialize();//‰Šú‰»
 void Game_Finalize();//I—¹ˆ—
 void Game_Update();//XV
 void Game_Draw();//•`‰æ
-
-
-
-extern int key_Update();
-extern int Keyboard_Get(int KeyCode);
