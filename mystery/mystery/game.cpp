@@ -24,13 +24,13 @@ static GameFaze nowfaze;
 
 static Level nowlevel= Easy;
 
-static int backhandle[3];
+static int backhandle;
 
 static int backgroundx;     //背景移動補正
 
 static double timinglimit = 300;  //着地面までの猶予幅
 static double gameoverlimit;             //ゲームオーバーまでの幅
-
+static int minusx;//着水時のx速度の減少
 static double timingradi[3];
 //スピードの決定
 void decindeSpeed(Stone *samp,Gauge_Info gau) {
@@ -73,15 +73,20 @@ void timingUpdate(Stone *samp) {
 	if (getKey(KEY_INPUT_RETURN) == 1) {
 		nowfaze = Fly;
 		samp->yspeed = UPPOWER;
+		samp->xspeed -= 0.1*sa;
+		if (samp->xspeed <= 0)
+			nowfaze = Result;
 	}
 }
 //着地時のタイミング描画
 void timing_Draw(Stone samp) {
 	int blue = GetColor(0, 0,255);
 	int red = GetColor(255, 0, 0);
+	int purple = GetColor(255, 0, 255);
 	DrawCircle(200, 200,timingradi[0], blue, TRUE);
 	DrawCircle(200, 200,  timingradi[1], red, TRUE);
 	DrawCircle(200, 200, timingradi[2], blue, TRUE);
+	DrawCircle(200, 200, timingradi[0]/2, purple, TRUE);
 }
 //背景計算
 void backgrouind_Update(int x) {
@@ -90,7 +95,7 @@ void backgrouind_Update(int x) {
 
 //背景描画
 void backgrouind_Draw() {
-	DrawRotaGraph((MAXX + MINX) / 2+backgroundx, WINDOW_HEIGHT / 2, 1, 0, backhandle[0], TRUE);
+	DrawRotaGraph((MAXX + MINX) / 2+backgroundx, WINDOW_HEIGHT / 2, 1, 0, backhandle, TRUE);
 }
 
 //飛ぶ計算
@@ -139,15 +144,25 @@ void Game_Initialize() {
 
 	backgroundx = 0;
 
-	backhandle[0] = LoadGraph("image/background1.png"); // 画像をロード
-	backhandle[0] = LoadGraph("image/background1.png"); // 画像をロード
-	backhandle[0] = LoadGraph("image/background1.png"); // 画像をロード
+
+
+	switch (nowlevel) {
+	case Easy:
+		minusx = 1;
+		backhandle = LoadGraph("image/background1.png"); // 画像をロード
+		break;
+	case Normal:
+		minusx = 2;
+		break;
+	case Hard:
+		minusx = 3;
+		break;
+	}
 }
 
 //終了処理
 void Game_Finalize() {
-	for(int i=0;i<sizeof backhandle/sizeof backhandle[0];i++)
-		DeleteGraph(backhandle[i]);
+		DeleteGraph(backhandle);
 }
 
 //更新
@@ -173,9 +188,9 @@ void Game_Update() {
 void Game_Draw() {
 	backgrouind_Draw();
 	stone_Draw(stone);
+	if(nowfaze==Gauge)
 	gauge_Draw(gauge);
 	if(nowfaze==NextPoint)
-
 		timing_Draw(stone);
 
 }
