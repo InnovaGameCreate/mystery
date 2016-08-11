@@ -18,16 +18,17 @@ typedef enum {
 typedef enum {
 	Easy,			//簡単
 	Normal,			//ふつう
-	Hard			//難しい
+	Hard,			//難しい
+	Level_None
 }Level;
 
 
 typedef struct {
 	int x, y, w, h;	//座標　幅　高さ
 	double now;        //現在のゲージ量
-	int max;		//最大のゲージ量
-	int count;		//経過時間
-	int speed;    //ゲージのスピード    大きいほど遅い
+	double max;		//最大のゲージ量
+	double count;		//経過時間
+	double speed;    //ゲージのスピード    大きいほど遅い
 }Gauge_Info;
 
 typedef struct {
