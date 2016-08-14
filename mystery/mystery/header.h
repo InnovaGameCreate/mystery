@@ -2,8 +2,13 @@
 #pragma once
 #include <math.h>
 #include "DxLib.h"
+#include <iostream>
+#include <string.h>
+
 #define WINDOW_WIDE 1024
 #define WINDOW_HEIGHT 600
+#define _CRT_SECURE_NO_WARNINGS
+
 
 typedef enum {
 	eScene_Start,   //スタート画面
@@ -38,6 +43,11 @@ typedef struct {
 	double xspeed, yspeed;
 }Stone;
 
+typedef struct {
+	char name[50];
+	int point;
+}Ranking;
+
 //fps.cpp
 extern bool fps_Update();
 extern void fps_Draw();
@@ -67,6 +77,13 @@ void Menu_Initialize();//初期化
 void Menu_Finalize();//終了処理
 void Menu_Update();//更新
 void Menu_Draw();//描画
+
+//save.cpp
+void save_Initialize();
+void save_Input(Level lev, char *name,int point);
+Ranking *save_getinfo();
+void save_LoadInfo();
+bool save_NewRecord(Level lev, int point);
 
 //game.cpp
 void Game_Initialize();//初期化

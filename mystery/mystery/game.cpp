@@ -8,7 +8,8 @@ double const DOWNPOWER = 0.5;   //重力
 #define UNDERY 350      //着地面
 #define MOVECAMEX WINDOW_WIDE/2-20     //カメラの移動開始の石のx地点
 #define TIMINGRADI 100    //タイミングゲージの半径
-
+static int InputHandle;
+static char name[50];
 
 typedef enum {
 	Gauge,
@@ -67,7 +68,14 @@ void gauge_Draw(Gauge_Info samp) {
 	DrawBox(samp.x, samp.y, samp.x + samp.w*(samp.now / samp.max), samp.y + samp.h, Red, TRUE);   // 四角形を描画(塗りつぶし)
 
 }
+void result_Initialize() {
+	// キー入力ハンドルを作る(キャンセルなし全角文字有り数値入力じゃなし)
+	InputHandle = MakeKeyInput(50, FALSE, FALSE, FALSE);
+	// 作成したキー入力ハンドルをアクティブにする
+	SetActiveKeyInput(InputHandle);
 
+
+}
 //着地時のタイミング計算
 void timingUpdate(Stone *samp) {
 	gameoverlimit = UNDERY + timinglimit - samp->y;
@@ -77,7 +85,9 @@ void timingUpdate(Stone *samp) {
 	timingradi[1] = gameoverlimit / (timinglimit * 2);
 	timingradi[2] = 50;
 	if (gameoverlimit <= 0) {
+		result_Initialize();
 		nowfaze = Result;
+	
 		return;
 	}
 
@@ -86,7 +96,11 @@ void timingUpdate(Stone *samp) {
 		samp->yspeed = UPPOWER;
 		samp->xspeed -= 0.1*sa;
 		if (samp->xspeed <= 1) {
+			result_Initialize();
 		nowfaze = Result;
+		
+		
+
 		if (samp->yspeed < 0)
 			samp->yspeed = 0;
 	}
@@ -112,6 +126,7 @@ void backgrouind_Draw() {
 	DrawRotaGraph((MAXX + MINX) / 2 + backgroundx, WINDOW_HEIGHT / 2, 1, 0, backhandle, TRUE);
 }
 
+
 //飛ぶ計算
 void fry_Update(Stone *samp, Gauge_Info sam) {
 	if (MOVECAMEX > samp->x)
@@ -136,6 +151,9 @@ void stone_Draw(Stone samp) {
 
 //初期化
 void Game_Initialize() {
+
+
+
 	nowfaze = Gauge;
 
 	//ゲージ初期値
@@ -182,6 +200,8 @@ void Game_Initialize() {
 		minusx = 10;
 		break;
 	}
+	save_Initialize();
+	save_LoadInfo();
 }
 
 //終了処理
@@ -191,7 +211,10 @@ void Game_Finalize() {
 	DeleteGraph(flyhandle[i]);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
+
+	DeleteKeyInput(InputHandle);
 }
+
 
 //更新
 void Game_Update() {
@@ -207,20 +230,34 @@ void Game_Update() {
 		timingUpdate(&stone);
 		break;
 	case Result:
+		
+
 		if (getKey(KEY_INPUT_DOWN) == 1 && sele == 1)
 			sele = 2;
 		if (getKey(KEY_INPUT_UP) == 1 && sele == 2)
 			sele = 1;
-		if (getKey(KEY_INPUT_RETURN)==1 )
-			
+		
 			switch (sele) {
 			case 0:
-				sele = 1;
+				if(save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20))==true)
+				GetKeyInputString(name, InputHandle);
+
+				if (CheckKeyInput(InputHandle) != 0) {
+					if (getKey(KEY_INPUT_RETURN) == 1) {
+						sele = 1;
+						if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true)
+						save_Input(nowlevel,name, (int)((stone.x - STONEX - backgroundx) / 20));
+					}
+		}
+				
+			
 				break;
 			case 1:
+				if (getKey(KEY_INPUT_RETURN) == 1)
 				SceneMgr_ChangeScene(eScene_Game);
 				break;
 			case 2:
+				if (getKey(KEY_INPUT_RETURN) == 1);
 				//(eScene_Menu);
 				break;
 			}
@@ -256,12 +293,21 @@ void Game_Draw() {
 		timing_Draw(200, 200);
 		break;
 	case Result:
-		if (stone.y > UNDERY&&nowfaze == Result) {
+		
+		
+		
+		if (stone.y > UNDERY) {
 			DrawStringToHandle(100, 100, "ランキング", GetColor(255, 255, 255), Font01);
+			DrawFormatStringToHandle(100, 140, GetColor(0, 255, 0), Font00, "１位 %s %d m", save_getinfo()[nowlevel * 3].name,save_getinfo()[nowlevel*3].point);
+			DrawFormatStringToHandle(100, 200, GetColor(0, 255, 0), Font00, "２位 %s %d m", save_getinfo()[nowlevel * 3+1].name, save_getinfo()[nowlevel * 3+1].point);
+			DrawFormatStringToHandle(100, 260, GetColor(0, 255, 0), Font00, "３位 %s %d m", save_getinfo()[nowlevel * 3+2].name, save_getinfo()[nowlevel * 3+2].point);
 			switch (sele)
 			{
 			case 0:
-				
+				if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true) {
+					DrawStringToHandle(300, 300, "名前を入力してください", GetColor(255, 255, 255), Font01);
+					DrawFormatStringToHandle(300, 380, GetColor(0, 255, 0), Font00, "名前：%s", name);
+				}
 				break;
 			case 1:
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 200, "もう一度", red, Font01);
@@ -274,6 +320,8 @@ void Game_Draw() {
 			default:
 				break;
 			}
+			
+			
 		
 
 		}
