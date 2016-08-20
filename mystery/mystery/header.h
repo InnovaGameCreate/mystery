@@ -41,6 +41,9 @@ typedef struct {
 	double flytime;
 	double penaltytime;
 	double xspeed, yspeed;
+	double rota;
+	double size;
+	int animation;
 }Stone;
 
 typedef struct {

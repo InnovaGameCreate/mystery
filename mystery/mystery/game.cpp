@@ -1,11 +1,11 @@
 #include "header.h"
-#define MAXX 11339		//背景の右端
+#define MAXX 15000		//背景の右端
 #define MINX 0			//背景の左端
 #define STONEX 100      //石の初期x
 #define FLYTIME 3		//飛ぶ時間
 #define UPPOWER -18        //上方向の初期値
 double const DOWNPOWER = 0.5;   //重力
-#define UNDERY 350      //着地面
+#define UNDERY 500      //着地面
 #define MOVECAMEX WINDOW_WIDE/2-20     //カメラの移動開始の石のx地点
 #define TIMINGRADI 100    //タイミングゲージの半径
 static int InputHandle;
@@ -24,10 +24,15 @@ static Stone stone;    //石
 
 static GameFaze nowfaze;
 
-static Level nowlevel =Easy;
+static Level nowlevel =Normal;
 
 static int backhandle;
 static int flyhandle[3];
+static int stonehandle;
+static int gaugehandle[3];
+static int gaugemaskhandle;
+
+static int maskini;
 
 static int backgroundx;     //背景移動補正
 
@@ -64,9 +69,19 @@ void gauge_Update(Gauge_Info *samp) {
 void gauge_Draw(Gauge_Info samp) {
 	int  Red = GetColor(255, 0, 0); // 赤色の値を取得
 
-	DrawBox(samp.x, samp.y, samp.x + samp.w, samp.y + samp.h, Red, FALSE);   // 四角形を描画
-	DrawBox(samp.x, samp.y, samp.x + samp.w*(samp.now / samp.max), samp.y + samp.h, Red, TRUE);   // 四角形を描画(塗りつぶし)
+	//DrawBox(samp.x, samp.y, samp.x + samp.w, samp.y + samp.h, Red, FALSE);   // 四角形を描画
+	//DrawBox(samp.x, samp.y, samp.x + samp.w*(samp.now / samp.max), samp.y + samp.h, Red, TRUE);   // 四角形を描画(塗りつぶし)
+	//DrawRotaGraph(samp.x, samp.y, 1, 0, gaugehandle[0], TRUE);
+	
+	CreateMaskScreen();
+	DrawMask(0,0, maskini, DX_MASKTRANS_BLACK);
+	DrawMask(samp.x-200+ samp.w*(samp.now / samp.max)- samp.w, samp.y-50, gaugemaskhandle, DX_MASKTRANS_WHITE);
+	
+	DrawRotaGraph(samp.x, samp.y, 1, 0, gaugehandle[0], TRUE);
 
+
+	DeleteMaskScreen();
+	DrawRotaGraph(samp.x, samp.y, 1, 0, gaugehandle[1], TRUE);
 }
 void result_Initialize() {
 	// キー入力ハンドルを作る(キャンセルなし全角文字有り数値入力じゃなし)
@@ -136,7 +151,7 @@ void fry_Update(Stone *samp, Gauge_Info sam) {
 	samp->y += samp->yspeed;
 
 	samp->yspeed += DOWNPOWER;
-
+	samp->rota += 0.03*samp->xspeed;
 	if (nowfaze == Fly&&UNDERY - timinglimit < samp->y&&samp->yspeed>0)
 		nowfaze = NextPoint;
 }
@@ -145,8 +160,7 @@ void fry_Update(Stone *samp, Gauge_Info sam) {
 void stone_Draw(Stone samp) {
 	if (samp.y > UNDERY&&nowfaze==Result)
 		return;
-	int  Green = GetColor(0, 255, 0); // 赤色の値を取得
-	DrawBox(samp.x, samp.y, samp.x + samp.w, samp.y + samp.h, Green, TRUE);
+	DrawRotaGraph(samp.x, samp.y, samp.size, samp.rota, stonehandle, TRUE);
 }
 
 //初期化
@@ -157,8 +171,8 @@ void Game_Initialize() {
 	nowfaze = Gauge;
 
 	//ゲージ初期値
-	gauge.x = 100;
-	gauge.y = 100;
+	gauge.x = 300;
+	gauge.y = 150;
 	gauge.w = 500;
 	gauge.h = 100;
 	gauge.now = 0;
@@ -175,6 +189,9 @@ void Game_Initialize() {
 	stone.penaltytime = 0;
 	stone.xspeed = 0;
 	stone.yspeed = 0;
+	stone.size = 0.8;
+	stone.rota = 0;
+	stone.animation = 0;
 
 	backgroundx = 0;
 
@@ -184,19 +201,30 @@ void Game_Initialize() {
 	flyhandle[1] = LoadGraph("image/good_timing.png"); // 画像をロード
 	flyhandle[2] = LoadGraph("image/maintiming.png"); // 画像をロード
 
+	gaugehandle[0] = LoadGraph("image/gauge.png"); // 画像をロード
+	gaugehandle[1] = LoadGraph("image/gauge_frame.png"); // 画像をロード
+	gaugehandle[2] = LoadGraph("image/gauge_mask.png"); // 画像をロード
+	
+	gaugemaskhandle= LoadMask("image/gauge_mask.png");
+
+	maskini= LoadMask("image/maskini.png");
+
 	Font00 = CreateFontToHandle("メイリオ", 70, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
 	Font01 = CreateFontToHandle("メイリオ", 30, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
 	switch (nowlevel) {
 	case Easy:
 		backhandle = LoadGraph("image/background_easy.png"); // 画像をロード
+		stonehandle= LoadGraph("image/stone_easy.png");
 		minusx = 1;
 		break;
 	case Normal:
 		backhandle = LoadGraph("image/background_normal.png"); // 画像をロード
+		stonehandle = LoadGraph("image/stone_normal.png");
 		minusx = 5;
 		break;
 	case Hard:
 		backhandle = LoadGraph("image/background_hard.png"); // 画像をロード
+		stonehandle = LoadGraph("image/stone_hard.png");
 		minusx = 10;
 		break;
 	}
@@ -209,10 +237,17 @@ void Game_Finalize() {
 	DeleteGraph(backhandle);
 	for(int i=0;i<sizeof(flyhandle)/sizeof(flyhandle[0]);i++)
 	DeleteGraph(flyhandle[i]);
+	for (int i = 0; i<sizeof(gaugehandle) / sizeof(gaugehandle[0]); i++)
+		DeleteGraph(gaugehandle[i]);
+
+	DeleteGraph(stonehandle);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
 
 	DeleteKeyInput(InputHandle);
+
+	DeleteMask(maskini);
+		DeleteMask(gaugemaskhandle);
 }
 
 
