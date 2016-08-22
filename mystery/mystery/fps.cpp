@@ -21,7 +21,7 @@ bool fps_Update() {
 }
 
 void fps_Draw() {
-	DrawFormatString(200, 200, GetColor(255, 255, 255), "%.1f", mFps);
+	DrawFormatString(200, 500, GetColor(255, 255, 255), "%.1f", mFps);
 }
 
 void fps_Wait() {

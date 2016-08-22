@@ -8,6 +8,7 @@ double const DOWNPOWER = 0.5;   //重力
 #define UNDERY 500      //着地面
 #define MOVECAMEX WINDOW_WIDE/2-20     //カメラの移動開始の石のx地点
 #define TIMINGRADI 100    //タイミングゲージの半径
+#define STONEFRAME 3
 static int InputHandle;
 static char name[50];
 
@@ -30,7 +31,11 @@ static int backhandle;
 static int flyhandle[3];
 static int stonehandle;
 static int gaugehandle[3];
+static int watersplash[3];
 static int gaugemaskhandle;
+static int numberhandle[11];
+
+static double timingrota[3];
 
 static int maskini;
 
@@ -99,10 +104,14 @@ void timingUpdate(Stone *samp) {
 	timingradi[0] = TIMINGRADI;
 	timingradi[1] = gameoverlimit / (timinglimit * 2);
 	timingradi[2] = 50;
-	if (gameoverlimit <= 0) {
+
+	timingrota[0]-=0.1;
+	timingrota[1]++;
+
+	if (gameoverlimit <= 0) {//ゲームオーバー
 		result_Initialize();
 		nowfaze = Result;
-	
+		
 		return;
 	}
 
@@ -110,7 +119,9 @@ void timingUpdate(Stone *samp) {
 		nowfaze = Fly;
 		samp->yspeed = UPPOWER;
 		samp->xspeed -= 0.1*sa;
-		if (samp->xspeed <= 1) {
+		if (stone.animation==0)
+		stone.animation++;
+		if (samp->xspeed <= 1) {//ゲームオーバー
 			result_Initialize();
 		nowfaze = Result;
 		
@@ -120,6 +131,7 @@ void timingUpdate(Stone *samp) {
 			samp->yspeed = 0;
 	}
 	}
+	
 }
 //着地時のタイミング描画
 void timing_Draw(int x, int y) {
@@ -128,8 +140,8 @@ void timing_Draw(int x, int y) {
 	int purple = GetColor(255, 0, 255);
 
 	DrawRotaGraph(x, y, 1, 0, flyhandle[0], TRUE);
-	DrawRotaGraph(x, y, 0.55, 0, flyhandle[1], TRUE);
-	DrawRotaGraph(x, y, timingradi[1], 0, flyhandle[2], TRUE);
+	DrawRotaGraph(x, y, 0.50,0, flyhandle[1], TRUE);
+	DrawRotaGraph(x, y, timingradi[1], timingrota[0], flyhandle[2], TRUE);
 }
 //背景計算
 void backgrouind_Update(int x) {
@@ -152,14 +164,24 @@ void fry_Update(Stone *samp, Gauge_Info sam) {
 
 	samp->yspeed += DOWNPOWER;
 	samp->rota += 0.03*samp->xspeed;
+
 	if (nowfaze == Fly&&UNDERY - timinglimit < samp->y&&samp->yspeed>0)
 		nowfaze = NextPoint;
 }
 
 //石描画
 void stone_Draw(Stone samp) {
-	if (samp.y > UNDERY&&nowfaze==Result)
+	if (samp.y > UNDERY&&nowfaze == Result)
 		return;
+	if (samp.animation != 0) {
+	if (samp.animation < STONEFRAME)
+		DrawRotaGraph(samp.x, samp.y, 1, 0, watersplash[0], TRUE);
+	else if (samp.animation < STONEFRAME*2)
+		DrawRotaGraph(samp.x, samp.y, 1, 0, watersplash[1], TRUE);
+	else if (samp.animation < STONEFRAME*3)
+		DrawRotaGraph(samp.x, samp.y, 1, 0, watersplash[2], TRUE);
+}
+	
 	DrawRotaGraph(samp.x, samp.y, samp.size, samp.rota, stonehandle, TRUE);
 }
 
@@ -179,6 +201,8 @@ void Game_Initialize() {
 	gauge.max = 100;
 	gauge.count = 0;
 	gauge.speed = 3;
+	for(int i=0;i<sizeof (timingrota)/sizeof(timingrota[0]);i++)
+	timingrota[i] = 0;
 
 	//石初期値
 	stone.x = STONEX;
@@ -192,6 +216,7 @@ void Game_Initialize() {
 	stone.size = 0.8;
 	stone.rota = 0;
 	stone.animation = 0;
+	timingradi[1] = 0;
 
 	backgroundx = 0;
 
@@ -205,6 +230,9 @@ void Game_Initialize() {
 	gaugehandle[1] = LoadGraph("image/gauge_frame.png"); // 画像をロード
 	gaugehandle[2] = LoadGraph("image/gauge_mask.png"); // 画像をロード
 	
+	LoadDivGraph("image/watersplash.png", 3, 3, 1, 200, 200, watersplash); // 画像の分割読み込み
+	LoadDivGraph("image/number.png", 11, 6, 2, 150, 150, numberhandle); // 画像の分割読み込み
+
 	gaugemaskhandle= LoadMask("image/gauge_mask.png");
 
 	maskini= LoadMask("image/maskini.png");
@@ -239,7 +267,10 @@ void Game_Finalize() {
 	DeleteGraph(flyhandle[i]);
 	for (int i = 0; i<sizeof(gaugehandle) / sizeof(gaugehandle[0]); i++)
 		DeleteGraph(gaugehandle[i]);
-
+	for (int i = 0; i<sizeof(watersplash) / sizeof(watersplash[0]); i++)
+		DeleteGraph(watersplash[i]);
+	for (int i = 0; i<sizeof(numberhandle) / sizeof(numberhandle[0]); i++)
+		DeleteGraph(numberhandle[i]);
 	DeleteGraph(stonehandle);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
@@ -253,6 +284,9 @@ void Game_Finalize() {
 
 //更新
 void Game_Update() {
+
+	if (stone.animation)
+		stone.animation = (stone.animation > STONEFRAME * 3) ? 0 : stone.animation + 1;
 	switch (nowfaze) {
 	case Gauge:
 		gauge_Update(&gauge);
@@ -308,8 +342,16 @@ void Game_Update() {
 
 
 void info_Draw() {
-	DrawFormatStringToHandle(100, 10, GetColor(0, 255, 0), Font00, "%d m",(stone.x-STONEX-backgroundx)/20);
-
+	int hundred = (stone.x - STONEX - backgroundx) / 20 / 100;
+	int ten = (stone.x - STONEX - backgroundx) / 20 % 100 / 10;
+	int one = (stone.x - STONEX - backgroundx) / 20 % 10;
+	
+	if(hundred!=0)
+	DrawRotaGraph(100, 60, 1, 0, numberhandle[hundred], TRUE);
+	if (hundred>0||ten!=0)
+	DrawRotaGraph(180, 60, 1, 0, numberhandle[ten], TRUE);
+	DrawRotaGraph(260, 60, 1, 0, numberhandle[one], TRUE);
+	DrawRotaGraph(380, 60, 1, 0, numberhandle[10], TRUE);
 }
 
 //描画
@@ -319,13 +361,17 @@ void Game_Draw() {
 	backgrouind_Draw(); 
 	stone_Draw(stone);
 	info_Draw();
+	
 	switch (nowfaze) {
 	case Gauge:
 		gauge_Draw(gauge);
-
+		
+		break;
+	case Fly:
+		timing_Draw(200, 280);
 		break;
 	case NextPoint:
-		timing_Draw(200, 200);
+		timing_Draw(200, 280);
 		break;
 	case Result:
 		
