@@ -10,7 +10,7 @@ double const DOWNPOWER = 0.5;   //重力
 #define TIMINGRADI 100    //タイミングゲージの半径
 #define STONEFRAME 3
 static int InputHandle;
-static char name[50];
+static char name[10];
 
 typedef enum {
 	Gauge,
@@ -27,13 +27,15 @@ static GameFaze nowfaze;
 
 static Level nowlevel =Normal;
 
-static int backhandle;
+static int backgroundhandle;
 static int flyhandle[3];
 static int stonehandle;
 static int gaugehandle[3];
 static int watersplash[3];
 static int gaugemaskhandle;
 static int numberhandle[11];
+static int rankhandle[3];
+static int backhandle;
 
 static double timingrota[3];
 
@@ -77,7 +79,7 @@ void gauge_Draw(Gauge_Info samp) {
 	//DrawBox(samp.x, samp.y, samp.x + samp.w, samp.y + samp.h, Red, FALSE);   // 四角形を描画
 	//DrawBox(samp.x, samp.y, samp.x + samp.w*(samp.now / samp.max), samp.y + samp.h, Red, TRUE);   // 四角形を描画(塗りつぶし)
 	//DrawRotaGraph(samp.x, samp.y, 1, 0, gaugehandle[0], TRUE);
-	
+	DrawRotaGraph(samp.x, samp.y, 1, 0, gaugehandle[2], TRUE);
 	CreateMaskScreen();
 	DrawMask(0,0, maskini, DX_MASKTRANS_BLACK);
 	DrawMask(samp.x-200+ samp.w*(samp.now / samp.max)- samp.w, samp.y-50, gaugemaskhandle, DX_MASKTRANS_WHITE);
@@ -90,7 +92,7 @@ void gauge_Draw(Gauge_Info samp) {
 }
 void result_Initialize() {
 	// キー入力ハンドルを作る(キャンセルなし全角文字有り数値入力じゃなし)
-	InputHandle = MakeKeyInput(50, FALSE, FALSE, FALSE);
+	InputHandle = MakeKeyInput(8, FALSE, FALSE, FALSE);
 	// 作成したキー入力ハンドルをアクティブにする
 	SetActiveKeyInput(InputHandle);
 
@@ -150,7 +152,7 @@ void backgrouind_Update(int x) {
 
 //背景描画
 void backgrouind_Draw() {
-	DrawRotaGraph((MAXX + MINX) / 2 + backgroundx, WINDOW_HEIGHT / 2, 1, 0, backhandle, TRUE);
+	DrawRotaGraph((MAXX + MINX) / 2 + backgroundx, WINDOW_HEIGHT / 2, 1, 0, backgroundhandle, TRUE);
 }
 
 
@@ -194,7 +196,7 @@ void Game_Initialize() {
 
 	//ゲージ初期値
 	gauge.x = 300;
-	gauge.y = 150;
+	gauge.y = 250;
 	gauge.w = 500;
 	gauge.h = 100;
 	gauge.now = 0;
@@ -228,8 +230,15 @@ void Game_Initialize() {
 
 	gaugehandle[0] = LoadGraph("image/gauge.png"); // 画像をロード
 	gaugehandle[1] = LoadGraph("image/gauge_frame.png"); // 画像をロード
-	gaugehandle[2] = LoadGraph("image/gauge_mask.png"); // 画像をロード
+	gaugehandle[2] = LoadGraph("image/gaugeback.png"); // 画像をロード
 	
+
+	rankhandle[0] = LoadGraph("image/ranking.png"); // 画像をロード
+	rankhandle[1] = LoadGraph("image/inputname.png"); // 画像をロード
+	rankhandle[2] = LoadGraph("image/hiscore.png"); // 画像をロード
+
+	backhandle = LoadGraph("image/back.png"); // 画像をロード
+
 	LoadDivGraph("image/watersplash.png", 3, 3, 1, 200, 200, watersplash); // 画像の分割読み込み
 	LoadDivGraph("image/number.png", 11, 6, 2, 150, 150, numberhandle); // 画像の分割読み込み
 
@@ -237,32 +246,35 @@ void Game_Initialize() {
 
 	maskini= LoadMask("image/maskini.png");
 
-	Font00 = CreateFontToHandle("メイリオ", 70, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
-	Font01 = CreateFontToHandle("メイリオ", 30, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
+	Font00 = CreateFontToHandle("HGRPP1", 25, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
+	Font01 = CreateFontToHandle("HGRPP1", 40, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
 	switch (nowlevel) {
 	case Easy:
-		backhandle = LoadGraph("image/background_easy.png"); // 画像をロード
+		backgroundhandle = LoadGraph("image/background_easy.png"); // 画像をロード
 		stonehandle= LoadGraph("image/stone_easy.png");
 		minusx = 1;
 		break;
 	case Normal:
-		backhandle = LoadGraph("image/background_normal.png"); // 画像をロード
+		backgroundhandle = LoadGraph("image/background_normal.png"); // 画像をロード
 		stonehandle = LoadGraph("image/stone_normal.png");
 		minusx = 5;
 		break;
 	case Hard:
-		backhandle = LoadGraph("image/background_hard.png"); // 画像をロード
+		backgroundhandle = LoadGraph("image/background_hard.png"); // 画像をロード
 		stonehandle = LoadGraph("image/stone_hard.png");
 		minusx = 10;
 		break;
 	}
 	save_Initialize();
 	save_LoadInfo();
+
+	for (int i = 0 ; i < sizeof(name) / sizeof(name[0]); i++)
+		name[i] = '\n';
 }
 
 //終了処理
 void Game_Finalize() {
-	DeleteGraph(backhandle);
+	DeleteGraph(backgroundhandle);
 	for(int i=0;i<sizeof(flyhandle)/sizeof(flyhandle[0]);i++)
 	DeleteGraph(flyhandle[i]);
 	for (int i = 0; i<sizeof(gaugehandle) / sizeof(gaugehandle[0]); i++)
@@ -271,7 +283,10 @@ void Game_Finalize() {
 		DeleteGraph(watersplash[i]);
 	for (int i = 0; i<sizeof(numberhandle) / sizeof(numberhandle[0]); i++)
 		DeleteGraph(numberhandle[i]);
+	for (int i = 0; i<sizeof(rankhandle) / sizeof(rankhandle[0]); i++)
+		DeleteGraph(rankhandle[i]);
 	DeleteGraph(stonehandle);
+	DeleteGraph(backhandle);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
 
@@ -308,11 +323,17 @@ void Game_Update() {
 		
 			switch (sele) {
 			case 0:
+				
 				if(save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20))==true)
 				GetKeyInputString(name, InputHandle);
-
+				
 				if (CheckKeyInput(InputHandle) != 0) {
 					if (getKey(KEY_INPUT_RETURN) == 1) {
+						if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true)
+						if (name[0] == '\0') {
+							SetActiveKeyInput(InputHandle);
+							break;
+						}
 						sele = 1;
 						if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true)
 						save_Input(nowlevel,name, (int)((stone.x - STONEX - backgroundx) / 20));
@@ -378,23 +399,52 @@ void Game_Draw() {
 		
 		
 		if (stone.y > UNDERY) {
-			DrawStringToHandle(100, 100, "ランキング", GetColor(255, 255, 255), Font01);
-			DrawFormatStringToHandle(100, 140, GetColor(0, 255, 0), Font00, "１位 %s %d m", save_getinfo()[nowlevel * 3].name,save_getinfo()[nowlevel*3].point);
-			DrawFormatStringToHandle(100, 200, GetColor(0, 255, 0), Font00, "２位 %s %d m", save_getinfo()[nowlevel * 3+1].name, save_getinfo()[nowlevel * 3+1].point);
-			DrawFormatStringToHandle(100, 260, GetColor(0, 255, 0), Font00, "３位 %s %d m", save_getinfo()[nowlevel * 3+2].name, save_getinfo()[nowlevel * 3+2].point);
+			DrawRotaGraph(300, 300, 1, 0, rankhandle[0], TRUE);
+			DrawStringToHandle(120, 170, "ランキング", GetColor(255, 255, 255), Font01);
+			switch (nowlevel)
+			{
+			case Easy:
+				DrawStringToHandle(330, 170, "～初級～", GetColor(255, 255, 255), Font01);
+				break;
+			case Normal:
+				DrawStringToHandle(330, 170, "～中級～", GetColor(255, 255, 255), Font01);
+				break;
+			case Hard:
+				DrawStringToHandle(330, 170, "～上級～", GetColor(255, 255, 255), Font01);
+				break;
+			default:
+				break;
+			}
+
+
+			DrawFormatStringToHandle(180, 255, GetColor(255, 255, 255), Font01, "%s", save_getinfo()[nowlevel * 3].name);
+			DrawFormatStringToHandle(180, 325, GetColor(255, 255, 255), Font01, "%s", save_getinfo()[nowlevel * 3 + 1].name);
+			DrawFormatStringToHandle(180, 395, GetColor(255, 255, 255), Font01, "%s", save_getinfo()[nowlevel * 3 + 2].name);
+
+			DrawFormatStringToHandle(380, 255, GetColor(255, 255, 255), Font01, "%d m", save_getinfo()[nowlevel*3].point);
+			DrawFormatStringToHandle(380, 325, GetColor(255, 255, 255), Font01, "%d m", save_getinfo()[nowlevel * 3+1].point);
+			DrawFormatStringToHandle(380, 395, GetColor(255, 255, 255), Font01, "%d m", save_getinfo()[nowlevel * 3+2].point);
 			switch (sele)
 			{
 			case 0:
 				if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true) {
-					DrawStringToHandle(300, 300, "名前を入力してください", GetColor(255, 255, 255), Font01);
-					DrawFormatStringToHandle(300, 380, GetColor(0, 255, 0), Font00, "名前：%s", name);
+
+					DrawRotaGraph(750,300, 1, 0, rankhandle[1], TRUE);
+					DrawRotaGraph(660, 160, 1, -0.3, rankhandle[2], TRUE);
+
+					DrawStringToHandle(600, 210, "名前を入力してください", GetColor(255, 255, 255), Font00);
+					DrawStringToHandle(600, 250, "(英数字8文字以内)", GetColor(255, 255, 255), Font00);
+					DrawStringToHandle(600, 290, "(かな4文字以内)", GetColor(255, 255, 255), Font00);
+					DrawFormatStringToHandle(700, 350, GetColor(255, 255, 255), Font00, "%s", name);
 				}
 				break;
 			case 1:
+				DrawRotaGraph(WINDOW_WIDE - 200, WINDOW_HEIGHT - 150, 1.5, 0, backhandle, TRUE);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 200, "もう一度", red, Font01);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 100, "難易度選択", white, Font01);
 				break;
 			case 2:
+				DrawRotaGraph(WINDOW_WIDE - 200, WINDOW_HEIGHT - 150, 1.5, 0, backhandle, TRUE);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 200, "もう一度", white, Font01);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 100, "難易度選択", red, Font01);
 				break;
