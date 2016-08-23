@@ -27,6 +27,30 @@ typedef enum {
 	Level_None
 }Level;
 
+//BGM
+typedef enum{
+	Start,
+	Menu,
+	Playing,
+	Bgm_none
+}Bgm;
+
+//SE
+typedef enum {
+	Start_Ok,
+	Menu_Select,
+	Menu_Ok,
+	Gauge_Move,
+	Gauge_Ok,
+	Timing_Move,
+	Timing_Ok,
+	Stone_Jump,
+	Finished,
+	Hiscored,
+	Result_Ok,
+	Se_none
+}Se;
+
 
 typedef struct {
 	int x, y, w, h;	//座標　幅　高さ
@@ -93,3 +117,15 @@ void Game_Initialize();//初期化
 void Game_Finalize();//終了処理
 void Game_Update();//更新
 void Game_Draw();//描画
+
+//bgm.cpp
+void bgm_Initialize();
+void bgm_Finalize();
+void bgm_Play(Bgm se);
+void bgm_Stop();
+
+//Se.cpp
+void Se_Initialize();
+void Se_Finalize();
+void Se_Play(Bgm se);
+void Se_Stop();

@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bgm.cpp" />
     <ClCompile Include="fps.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="key.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="save.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
+    <ClCompile Include="Se.cpp" />
     <ClCompile Include="start.cpp" />
   </ItemGroup>
   <ItemGroup>
