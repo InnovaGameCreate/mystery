@@ -71,7 +71,7 @@ typedef struct {
 }Stone;
 
 typedef struct {
-	char name[50];
+	char name[10];
 	int point;
 }Ranking;
 
