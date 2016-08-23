@@ -29,9 +29,10 @@ typedef enum {
 
 //BGM
 typedef enum{
-	Start,
-	Menu,
-	Playing,
+	Bgm_Start,
+	Bgm_Menu,
+	Bgm_Playing,
+	Bgm_Result,
 	Bgm_none
 }Bgm;
 
@@ -44,7 +45,6 @@ typedef enum {
 	Gauge_Ok,
 	Timing_Move,
 	Timing_Ok,
-	Stone_Jump,
 	Finished,
 	Hiscored,
 	Result_Ok,
@@ -125,7 +125,6 @@ void bgm_Play(Bgm se);
 void bgm_Stop();
 
 //Se.cpp
-void Se_Initialize();
-void Se_Finalize();
-void Se_Play(Bgm se);
-void Se_Stop();
+void se_Initialize();
+void se_Finalize();
+void se_Play(Se se);

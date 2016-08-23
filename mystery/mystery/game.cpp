@@ -65,9 +65,12 @@ void decindeSpeed(Stone *samp, Gauge_Info gau) {
 //ゲージ計算
 void gauge_Update(Gauge_Info *samp) {
 	if (getKey(KEY_INPUT_RETURN) == 1) {
+		se_Play(Gauge_Ok);
 		decindeSpeed(&stone, gauge);
 		nowfaze = Fly;
 	}
+	if(samp->now<3)
+		se_Play(Gauge_Move);
 	samp->count += samp->speed;
 	samp->now = (int)samp->count % 101;
 
@@ -113,11 +116,13 @@ void timingUpdate(Stone *samp) {
 	if (gameoverlimit <= 0) {//ゲームオーバー
 		result_Initialize();
 		nowfaze = Result;
-		
+		bgm_Stop();
+		bgm_Play(Bgm_Result);
 		return;
 	}
 
 	if (getKey(KEY_INPUT_RETURN) == 1) {
+		se_Play(Timing_Ok);
 		nowfaze = Fly;
 		samp->yspeed = UPPOWER;
 		samp->xspeed -= 0.1*sa;
@@ -126,8 +131,8 @@ void timingUpdate(Stone *samp) {
 		if (samp->xspeed <= 1) {//ゲームオーバー
 			result_Initialize();
 		nowfaze = Result;
-		
-		
+		bgm_Stop();
+		bgm_Play(Bgm_Result);
 
 		if (samp->yspeed < 0)
 			samp->yspeed = 0;
@@ -190,7 +195,7 @@ void stone_Draw(Stone samp) {
 //初期化
 void Game_Initialize() {
 
-
+	bgm_Play(Bgm_Playing);
 
 	nowfaze = Gauge;
 
@@ -294,6 +299,9 @@ void Game_Finalize() {
 
 	DeleteMask(maskini);
 		DeleteMask(gaugemaskhandle);
+
+
+		bgm_Stop();
 }
 
 
@@ -335,6 +343,7 @@ void Game_Update() {
 							break;
 						}
 						sele = 1;
+						se_Play(Hiscored);
 						if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true)
 						save_Input(nowlevel,name, (int)((stone.x - STONEX - backgroundx) / 20));
 					}
@@ -343,12 +352,16 @@ void Game_Update() {
 			
 				break;
 			case 1:
-				if (getKey(KEY_INPUT_RETURN) == 1)
-				SceneMgr_ChangeScene(eScene_Game);
+				if (getKey(KEY_INPUT_RETURN) == 1) {
+					SceneMgr_ChangeScene(eScene_Game);
+					se_Play(Result_Ok);
+				}
 				break;
 			case 2:
-				if (getKey(KEY_INPUT_RETURN) == 1);
-				//(eScene_Menu);
+				if (getKey(KEY_INPUT_RETURN) == 1); {
+					//(eScene_Menu);
+					se_Play(Result_Ok);
+				}
 				break;
 			}
 		

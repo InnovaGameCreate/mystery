@@ -3,27 +3,16 @@
 //Ÿ‚ÌBGM‚ÉˆÚ‚éÛ‚Í•K‚¸BGM‚ğ’â~‚µ‚Ä‚©‚çŸ‚ÉˆÚ‚é‚±‚Æ
 
 
-static Bgm bgmhandle[Bgm_none];
+static int bgmhandle[Bgm_none];
 //‰Šú‰»
 void bgm_Initialize() {
-	//—áFplayer[Start]= LoadSoundMem("sound/town.mp3"); // sound/town.mp3‚ğƒ[ƒh‚µA¯•Ê”Ô†‚ğhandle‚ÉŠi”[
-
+	bgmhandle[Bgm_Playing]= LoadSoundMem("bgm/ryunomai.mp3"); // sound/town.mp3‚ğƒ[ƒh‚µA¯•Ê”Ô†‚ğhandle‚ÉŠi”[
+	bgmhandle[Bgm_Result] = LoadSoundMem("bgm/famipop3.wav");
 }
 //ˆø”‚Éİ’è‚µ‚½BGMÄ¶
 void bgm_Play(Bgm se) {
 
-	switch (se)
-	{
-	case Start:
-		
-		break;
-	case Menu:
 		PlaySoundMem(bgmhandle[se], DX_PLAYTYPE_LOOP);
-		break;
-	case Playing:
-
-		break;
-	}
 }
 //BGM’â~
 void bgm_Stop() {

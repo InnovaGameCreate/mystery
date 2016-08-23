@@ -2,9 +2,10 @@
 int k;
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ChangeWindowMode(TRUE), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
-
+	bgm_Initialize();
+	se_Initialize();
 	SceneMgr_Initialize();
-
+	
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0) {
 		SceneMgr_Update();  //çXêV
 		SceneMgr_Draw();    //ï`âÊ
@@ -17,6 +18,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	SceneMgr_Finalize();
+	bgm_Finalize();
+	se_Finalize();
 
 	DxLib_End();
 	return 0;
