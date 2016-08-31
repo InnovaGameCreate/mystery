@@ -1,6 +1,6 @@
 #include "header.h"
 
-static eScene mScene = eScene_Game;    //シーン管理変数
+static eScene mScene = eScene_Start;    //シーン管理変数
 static eScene mNextScene = eScene_None;    //次のシーン管理変数
 
 static void SceneMgr_InitializeModule(eScene scene);//指定モジュールを初期化する
@@ -42,7 +42,7 @@ void SceneMgr_Update() {
 void SceneMgr_Draw() {
 	switch (mScene) {      //シーンによって処理を分岐
 	case eScene_Start:       //現在の画面がスタート画面なら
-		start_Initialize();  //	スタート画面の初期化処理をする
+		start_Draw();  //	スタート画面の初期化処理をする
 		break;//以下略
 	case eScene_Menu:   //現在の画面がメニュー画面なら
 		Menu_Draw();    //メニュー画面の描画処理をする

@@ -3,7 +3,7 @@
 
 static Ranking info[9];
 
-void save_Initialize() {
+void info_Initialize() {
 
 	for (int i = Easy;i<Level_None ; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -12,6 +12,21 @@ void save_Initialize() {
 			info[i * 3 + j].point = 0;
 		}
 	}
+}
+void save_Initialize() {
+	
+	save_LoadInfo();
+	info_Initialize();
+	FILE* fp;
+	errno_t error;
+	if (error = fopen_s(&fp, "セーブデータ.dat", "wb") != 0) {
+		//エラー処理
+
+
+	}
+	fwrite(info, sizeof(Ranking), 9, fp); // SaveData_t構造体の中身を出力
+
+	fclose(fp);
 }
 
 //スコア更新かどうか

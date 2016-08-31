@@ -270,7 +270,7 @@ void Game_Initialize() {
 		minusx = 10;
 		break;
 	}
-	save_Initialize();
+	info_Initialize();
 	save_LoadInfo();
 
 	for (int i = 0 ; i < sizeof(name) / sizeof(name[0]); i++)
@@ -358,7 +358,7 @@ void Game_Update() {
 				}
 				break;
 			case 2:
-				if (getKey(KEY_INPUT_RETURN) == 1); {
+				if (getKey(KEY_INPUT_RETURN) == 1) {
 					//(eScene_Menu);
 					se_Play(Result_Ok);
 				}

@@ -79,6 +79,7 @@ typedef struct {
 extern bool fps_Update();
 extern void fps_Draw();
 extern void fps_Wait();
+extern int get_mCount();
 
 //key.cpp
 extern int key_Update();
@@ -106,6 +107,7 @@ void Menu_Update();//XV
 void Menu_Draw();//•`‰æ
 
 //save.cpp
+void info_Initialize();
 void save_Initialize();
 void save_Input(Level lev, char *name,int point);
 Ranking *save_getinfo();

@@ -20,6 +20,9 @@ bool fps_Update() {
 	return true;
 }
 
+int get_mCount() {
+	return mCount;
+}
 void fps_Draw() {
 	DrawFormatString(200, 500, GetColor(255, 255, 255), "%.1f", mFps);
 }
