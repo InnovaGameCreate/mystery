@@ -37,7 +37,7 @@ void start_Update() {
 		break;
 	case 1:
 		if (getKey(KEY_INPUT_RETURN) == 1) {
-			/*SceneMgr_ChangeScene()@ƒƒjƒ…[‚Ö*/;
+			SceneMgr_ChangeScene(eScene_Menu);
 			se_Play(Result_Ok);
 		}
 		if (getKey(KEY_INPUT_DOWN) == 1) {

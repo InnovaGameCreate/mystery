@@ -230,6 +230,8 @@ void Game_Initialize() {
 
 	sele = 0;
 
+	nowlevel = get_nowsel_level();
+
 	flyhandle[0] = LoadGraph("image/timing_back.png"); // 画像をロード
 	flyhandle[1] = LoadGraph("image/good_timing.png"); // 画像をロード
 	flyhandle[2] = LoadGraph("image/maintiming.png"); // 画像をロード
@@ -360,7 +362,7 @@ void Game_Update() {
 				break;
 			case 2:
 				if (getKey(KEY_INPUT_RETURN) == 1) {
-					//(eScene_Menu);
+					SceneMgr_ChangeScene(eScene_Menu);
 					se_Play(Result_Ok);
 				}
 				break;

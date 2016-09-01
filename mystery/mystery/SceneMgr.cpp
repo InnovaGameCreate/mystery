@@ -1,6 +1,6 @@
 #include "header.h"
 
-static eScene mScene = eScene_Rank;    //シーン管理変数
+static eScene mScene = eScene_Menu;    //シーン管理変数
 static eScene mNextScene = eScene_None;    //次のシーン管理変数
 
 static void SceneMgr_InitializeModule(eScene scene);//指定モジュールを初期化する
