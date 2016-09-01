@@ -14,7 +14,7 @@ typedef enum {
 	eScene_Start,   //スタート画面
 	eScene_Menu,    //メニュー画面
 	eScene_Game,    //ゲーム画面
-
+	eScene_Rank,
 
 	eScene_None,    //無し
 } eScene;
@@ -119,6 +119,12 @@ void Game_Initialize();//初期化
 void Game_Finalize();//終了処理
 void Game_Update();//更新
 void Game_Draw();//描画
+
+//rank.cpp
+void rank_Initialize();//初期化
+void rank_Finalize();//終了処理
+void rank_Update();//更新
+void rank_Draw();//描画
 
 //bgm.cpp
 void bgm_Initialize();

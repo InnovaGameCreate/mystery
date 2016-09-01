@@ -25,7 +25,7 @@ static Stone stone;    //Î
 
 static GameFaze nowfaze;
 
-static Level nowlevel =Normal;
+static Level nowlevel =Easy;
 
 static int backgroundhandle;
 static int flyhandle[3];
@@ -43,7 +43,8 @@ static int maskini;
 
 static int backgroundx;     //”wŒiˆÚ“®•â³
 
-static double timinglimit = 200;  //’…’n–Ê‚Ü‚Å‚Ì—P—\•
+static double timinglimit = 200; 
+//’…’n–Ê‚Ü‚Å‚Ì—P—\•
 static double gameoverlimit;             //ƒQ[ƒ€ƒI[ƒo[‚Ü‚Å‚Ì•
 static int minusx;//’……‚Ìx‘¬“x‚ÌŒ¸­
 static double timingradi[3];

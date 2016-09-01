@@ -5,10 +5,14 @@ static int Handle[3];
 static int Font00;
 static int sel;
 static double rota[2];
+static int rankhandle;
+
 void start_Initialize() {
 	Handle[0] = LoadGraph("image/title_back.png");
 	Handle[1] = LoadGraph("image/title_font1.png");
 	Handle[2] = LoadGraph("image/title_font2.png");
+
+	rankhandle = LoadGraph("image/ranking.png");
 
 	Font00 = CreateFontToHandle("HGRPP1", 40, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
 	sel = 0;
@@ -18,6 +22,7 @@ void start_Finalize() {
 	for (int i = 0; i < sizeof(Handle) / sizeof(Handle[0]); i++)
 		DeleteGraph(Handle[i]);
 	DeleteFontToHandle(Font00);
+	DeleteGraph(rankhandle);
 }
 
 void start_Update() {
@@ -42,7 +47,7 @@ void start_Update() {
 		break;
 	case 2:
 		if (getKey(KEY_INPUT_RETURN) == 1) {
-			/*SceneMgr_ChangeScene()　ランキング表示へ*/;
+			SceneMgr_ChangeScene(eScene_Rank);
 			se_Play(Result_Ok);
 		}
 		if (getKey(KEY_INPUT_UP) == 1) {

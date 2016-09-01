@@ -1,6 +1,6 @@
 #include "header.h"
 
-static eScene mScene = eScene_Start;    //シーン管理変数
+static eScene mScene = eScene_Rank;    //シーン管理変数
 static eScene mNextScene = eScene_None;    //次のシーン管理変数
 
 static void SceneMgr_InitializeModule(eScene scene);//指定モジュールを初期化する
@@ -35,6 +35,9 @@ void SceneMgr_Update() {
 	case eScene_Game:
 		Game_Update();
 		break;
+	case eScene_Rank:
+		rank_Update();
+		break;
 	}
 }
 
@@ -49,6 +52,9 @@ void SceneMgr_Draw() {
 		break;//以下略
 	case eScene_Game:
 		Game_Draw();
+		break;
+	case eScene_Rank:
+		rank_Draw();
 		break;
 	}
 }
@@ -70,6 +76,9 @@ static void SceneMgr_InitializeModule(eScene scene) {
 	case eScene_Game:
 		Game_Initialize();
 		break;
+	case eScene_Rank:
+		rank_Initialize();
+		break;
 
 	}
 }
@@ -84,7 +93,10 @@ static void SceneMgr_FinalizeModule(eScene scene) {
 		Menu_Finalize();   //メニュー画面の終了処理処理をする
 		break;//以下略
 	case eScene_Game:
-		Game_Finalize();
+		Game_Finalize(); 
+		break;
+	case eScene_Rank:
+		rank_Finalize();
 		break;
 
 	}
