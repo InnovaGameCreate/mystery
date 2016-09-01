@@ -62,7 +62,7 @@ void Menu_Finalize() {
 
 //更新
 void Menu_Update() {
-	if (getKey(KEY_INPUT_ESCAPE) == 1)
+	if (getKey(KEY_INPUT_S) == 1)
 		SceneMgr_ChangeScene(eScene_Start);
 
 	if (getKey(KEY_INPUT_RIGHT) == 1) {//下キーが押されていたら
@@ -95,7 +95,7 @@ void Menu_Update() {
 void Menu_Draw() {   //描画
 	DrawBox(0, 0, WINDOW_WIDE, WINDOW_HEIGHT, GetColor(255, 100, 100), 1);
 	DrawStringToHandle(300, 50, "ステージ選択", GetColor(255, 255, 255), Font00);
-	DrawStringToHandle(100, WINDOW_HEIGHT-50, "ESCキー：スタート画面　ENTERキー：決定　方向キー：選択", GetColor(255, 255, 255), Font01);
+	DrawStringToHandle(100, WINDOW_HEIGHT-50, "Sキー：スタート画面　ENTERキー：決定　方向キー：選択", GetColor(255, 255, 255), Font01);
 	/*DrawString(200, 150, "選択画面です。", GetColor(255, 255, 255));
 	DrawString(200, 170, "上下キーを押し、エンターを押して下さい。", GetColor(255, 255, 255));
 	DrawString(200,EREMENT_Y , "初級", GetColor(255, 255, 255));
