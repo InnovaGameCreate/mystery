@@ -13,8 +13,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	freopen("CON", "w", stderr);    // 標準エラー出力の割り当て
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0) {
 		
-		printf("aaaaa\n");
-		
 		SceneMgr_Update();  //更新
 		if (get_mode() == 0)
 			if (ClearDrawScreen() != 0)
