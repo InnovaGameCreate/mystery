@@ -137,3 +137,14 @@ void bgm_Stop();
 void se_Initialize();
 void se_Finalize();
 void se_Play(Se se);
+
+
+//wipe.cpp
+void wipe_Initialize();
+void wipe_Finalize();
+void wipe_Update();
+void wipe_Draw();
+
+int get_mode();
+void set_mode(int nextmode);
+void set_Initialize();

@@ -6,7 +6,8 @@ static eScene mNextScene = eScene_None;    //次のシーン管理変数
 static void SceneMgr_InitializeModule(eScene scene);//指定モジュールを初期化する
 static void SceneMgr_FinalizeModule(eScene scene);//指定モジュールの終了処理を行う
 
-												  //初期化
+static int mode;
+							  //初期化
 void SceneMgr_Initialize() {
 	SetGraphMode(WINDOW_WIDE,WINDOW_HEIGHT, 32);
 	SceneMgr_InitializeModule(mScene);
@@ -17,8 +18,17 @@ void SceneMgr_Finalize() {
 	SceneMgr_FinalizeModule(mScene);
 }
 
+int get_mode() {
+	return mode;
+}
+void set_mode(int nextmode) {
+	mode = nextmode;
+}
 //更新
 void SceneMgr_Update() {
+	
+
+
 	if (mNextScene != eScene_None) {    //次のシーンがセットされていたら
 		SceneMgr_FinalizeModule(mScene);//現在のシーンの終了処理を実行
 		mScene = mNextScene;    //次のシーンを現在のシーンセット
@@ -43,6 +53,8 @@ void SceneMgr_Update() {
 
 //描画
 void SceneMgr_Draw() {
+
+	
 	switch (mScene) {      //シーンによって処理を分岐
 	case eScene_Start:       //現在の画面がスタート画面なら
 		start_Draw();  //	スタート画面の初期化処理をする
@@ -61,6 +73,8 @@ void SceneMgr_Draw() {
 
 // 引数 nextScene にシーンを変更する
 void SceneMgr_ChangeScene(eScene NextScene) {
+	set_Initialize();
+	mode = 1;
 	mNextScene = NextScene;    //次のシーンをセットする
 }
 

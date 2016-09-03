@@ -51,7 +51,7 @@ static double timingradi[3];
 
 static int sele;
 
-int Font00,Font01;
+static int Font00,Font01,Font02;
 
 void draw_CircleLine(int x, int y, double radi, double size, int color1, int color2) {
 	DrawCircle(200, 200, radi, color1, TRUE);
@@ -256,6 +256,7 @@ void Game_Initialize() {
 
 	Font00 = CreateFontToHandle("HGRPP1", 25, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
 	Font01 = CreateFontToHandle("HGRPP1", 40, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3のフォントを作成
+	Font02 = CreateFontToHandle("HGRPP1", 30, 3, DX_FONTTYPE_ANTIALIASING_EDGE);//"メイリオ"  の30pt,太さ3の
 	switch (nowlevel) {
 	case Easy:
 		backgroundhandle = LoadGraph("image/background_easy.png"); // 画像をロード
@@ -297,6 +298,7 @@ void Game_Finalize() {
 	DeleteGraph(backhandle);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
+	DeleteFontToHandle(Font02);
 
 	DeleteKeyInput(InputHandle);
 
@@ -402,13 +404,15 @@ void Game_Draw() {
 	switch (nowfaze) {
 	case Gauge:
 		gauge_Draw(gauge);
-		
+		DrawStringToHandle(100, WINDOW_HEIGHT - 50, "ENTERキー：決定", GetColor(255, 255, 255), Font01);
 		break;
 	case Fly:
 		timing_Draw(200, 280);
+		DrawStringToHandle(100, WINDOW_HEIGHT - 50, "ENTERキー：決定", GetColor(255, 255, 255), Font01);
 		break;
 	case NextPoint:
 		timing_Draw(200, 280);
+		DrawStringToHandle(100, WINDOW_HEIGHT - 50, "ENTERキー：決定", GetColor(255, 255, 255), Font01);
 		break;
 	case Result:
 		
@@ -444,7 +448,7 @@ void Game_Draw() {
 			{
 			case 0:
 				if (save_NewRecord(nowlevel, (int)((stone.x - STONEX - backgroundx) / 20)) == true) {
-
+					DrawStringToHandle(100, WINDOW_HEIGHT - 50, "BACKSPACEキー：1字削除  ENTERキー：決定", GetColor(255, 255, 255), Font02);
 					DrawRotaGraph(750,300, 1, 0, rankhandle[1], TRUE);
 					DrawRotaGraph(660, 160, 1, -0.3, rankhandle[2], TRUE);
 
@@ -456,11 +460,14 @@ void Game_Draw() {
 				break;
 			case 1:
 				DrawRotaGraph(WINDOW_WIDE - 200, WINDOW_HEIGHT - 150, 1.5, 0, backhandle, TRUE);
+				DrawStringToHandle(100, WINDOW_HEIGHT - 50, "上下方向キー：選択  ENTERキー：決定", GetColor(255, 255, 255), Font02);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 200, "もう一度", red, Font01);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 100, "難易度選択", white, Font01);
 				break;
 			case 2:
+			
 				DrawRotaGraph(WINDOW_WIDE - 200, WINDOW_HEIGHT - 150, 1.5, 0, backhandle, TRUE);
+				DrawStringToHandle(100, WINDOW_HEIGHT - 50, "上下方向キー：選択  ENTERキー：決定", GetColor(255, 255, 255), Font02);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 200, "もう一度", white, Font01);
 				DrawStringToHandle(WINDOW_WIDE - 300, WINDOW_HEIGHT - 100, "難易度選択", red, Font01);
 				break;

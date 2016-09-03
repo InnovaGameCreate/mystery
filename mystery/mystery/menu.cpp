@@ -20,7 +20,7 @@ Point selection[3];
 static int handle[4];
 static int Font00,Font01;
 static Level nowsel_level;
-
+static int uihandle;
 static int NowSelect = eMenu_Erement;    //現在の選択状態(初期は初級選択中)
 
 Level get_nowsel_level() {
@@ -36,7 +36,7 @@ void Menu_Initialize() {
 	handle[3] = LoadGraph("image/stageselect.png"); // 画像をロード
 	NowSelect = eMenu_Erement;
 	nowsel_level = Easy;
-	
+	uihandle = LoadGraph("image/UIback.png");
 	DrawRotaGraph(300, 300, 1, 0, handle[0], TRUE);
 	DrawRotaGraph(300, 300, 1, 0, handle[1], TRUE);
 	DrawRotaGraph(300, 300, 1, 0, handle[2], TRUE);
@@ -54,7 +54,7 @@ void Menu_Initialize() {
 void Menu_Finalize() {
 	for (int i = 0; i<sizeof(handle) / sizeof(handle[0]); i++)
 		DeleteGraph(handle[i]);
-
+	DeleteGraph(uihandle);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
 	}
@@ -62,6 +62,8 @@ void Menu_Finalize() {
 
 //更新
 void Menu_Update() {
+	
+
 	if (getKey(KEY_INPUT_S) == 1)
 		SceneMgr_ChangeScene(eScene_Start);
 
@@ -79,13 +81,17 @@ void Menu_Update() {
 		se_Play(Result_Ok);
 		switch (nowsel_level) {//現在選択中の状態によって処理を分岐
 		case Easy://初級選択中なら
+
 			SceneMgr_ChangeScene(eScene_Game);//シーンをゲーム画面に変更
+		
 			break;
 		case Normal://中級選択中なら
 			SceneMgr_ChangeScene(eScene_Game);//シーンをゲーム画面に変更
+		
 			break;
 		case Hard://上級選択中なら
 			SceneMgr_ChangeScene(eScene_Game);//シーンをゲーム画面に変更
+			
 			break;
 		}
 	}
@@ -93,9 +99,11 @@ void Menu_Update() {
 
 	
 void Menu_Draw() {   //描画
+	
 	DrawBox(0, 0, WINDOW_WIDE, WINDOW_HEIGHT, GetColor(255, 100, 100), 1);
+	DrawRotaGraph(WINDOW_WIDE/2, WINDOW_HEIGHT/2, 1, 0, uihandle, TRUE);
 	DrawStringToHandle(300, 50, "ステージ選択", GetColor(255, 255, 255), Font00);
-	DrawStringToHandle(100, WINDOW_HEIGHT-50, "Sキー：スタート画面　ENTERキー：決定　方向キー：選択", GetColor(255, 255, 255), Font01);
+	DrawStringToHandle(50, WINDOW_HEIGHT-50, "Sキー：スタート画面に戻る　方向キー：選択　ENTERキー：決定　", GetColor(255, 255, 255), Font01);
 	/*DrawString(200, 150, "選択画面です。", GetColor(255, 255, 255));
 	DrawString(200, 170, "上下キーを押し、エンターを押して下さい。", GetColor(255, 255, 255));
 	DrawString(200,EREMENT_Y , "初級", GetColor(255, 255, 255));
@@ -118,6 +126,8 @@ void Menu_Draw() {   //描画
 	DrawRotaGraph(selection[i].x, selection[i].y, 1, 0, handle[i], TRUE);
 	
 	//DrawString(250, y, "■", GetColor(255, 255, 255));
+
+	wipe_Draw();
 }
 
 
