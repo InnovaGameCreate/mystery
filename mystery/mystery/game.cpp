@@ -12,6 +12,25 @@ double const DOWNPOWER = 0.5;   //重力
 static int InputHandle;
 static char name[10];
 
+
+// ショットとパーティクルの最大数
+#define MAX_SHOT	4
+#define MAX_SPARK	800
+
+
+
+// 火花データ型
+typedef struct tagSPARK
+{
+	int Valid;	// このデータが使用中か、フラグ
+	int X, Y;	// 火花の位置
+	int Sx, Sy;	// 火花の移動力
+	int G;		// 火花の重さ
+	int Bright;	// 火花の明るさ
+} SPARK;
+
+SPARK Spark[MAX_SPARK];	// 火花データ
+
 typedef enum {
 	Gauge,
 	Fly,
@@ -36,6 +55,7 @@ static int gaugemaskhandle;
 static int numberhandle[11];
 static int rankhandle[3];
 static int backhandle;
+static int handlestar;
 
 static double timingrota[3];
 
@@ -52,6 +72,67 @@ static double timingradi[3];
 static int sele;
 
 static int Font00,Font01,Font02;
+
+
+// 火花を出す処理
+void CreateSpark(int x, int y)
+{
+	int i;
+
+	// 使われていない火花データを探す
+	for (i = 0; i < MAX_SPARK; i++)
+	{
+		if (Spark[i].Valid == 0) break;
+	}
+
+	// もし使われていない火花データがあったら火花を出す
+	if (i != MAX_SPARK)
+	{
+		// 火花の位置を設定
+		Spark[i].X = x * 100;
+		Spark[i].Y = y * 100;
+
+		// 移動力を設定
+		Spark[i].Sx = GetRand(1000) - 500;
+		Spark[i].Sy = -GetRand(500);
+
+		// 火花の重さをセット
+		Spark[i].G = GetRand(50);
+	
+
+		// 火花の明るさセット
+		Spark[i].Bright = 255;
+
+		// 火花データを使用中にセット
+		Spark[i].Valid = 1;
+	}
+}
+
+// 火花移動処理
+void MoveSpark(void)
+{
+	int i;
+
+	// 火花の移動処理
+	for (i = 0; i < MAX_SPARK; i++)
+	{
+		// 火花データが無効だったらスキップ
+		if (Spark[i].Valid == 0) continue;
+
+		// 位置を移動力に応じてずらす
+		Spark[i].Y += Spark[i].Sy;
+		Spark[i].X += Spark[i].Sx;
+
+		// 移動力を変更
+		Spark[i].Sy += Spark[i].G;
+
+		// 火花の明るさを下げる
+		Spark[i].Bright -= 2;
+
+		// 火花の明るさが０以下になったら火花データを無効にする
+		if (Spark[i].Bright < 0) Spark[i].Valid = 0;
+	}
+}
 
 void draw_CircleLine(int x, int y, double radi, double size, int color1, int color2) {
 	DrawCircle(200, 200, radi, color1, TRUE);
@@ -124,9 +205,21 @@ void timingUpdate(Stone *samp) {
 
 	if (getKey(KEY_INPUT_RETURN) == 1) {
 		se_Play(Timing_Ok);
+		// 火花を出す数をセット
+	
+	
 		nowfaze = Fly;
 		samp->yspeed = UPPOWER;
 		samp->xspeed -= 0.1*sa;
+
+		int R = sa<10?30:(sa<20)?20:10;
+		printf("%d\n", sa);
+		for (int j = 0; j < R; j++)
+		{
+			// 火花を生成
+			CreateSpark(200, 280);
+		}
+
 		if (stone.animation==0)
 		stone.animation++;
 		if (samp->xspeed <= 1) {//ゲームオーバー
@@ -150,6 +243,22 @@ void timing_Draw(int x, int y) {
 	DrawRotaGraph(x, y, 1, 0, flyhandle[0], TRUE);
 	DrawRotaGraph(x, y, 0.50,0, flyhandle[1], TRUE);
 	DrawRotaGraph(x, y, timingradi[1], timingrota[0], flyhandle[2], TRUE);
+
+	// 火花を描画する
+	for (int j = 0; j < MAX_SPARK; j++)
+	{
+		// 火花データが有効な時のみ描画
+		if (Spark[j].Valid == 1) {
+			double r = 0.05*GetRand(10);
+			double radi = 2*3.14/360*GetRand(360);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, Spark[j].Bright);
+			DrawRotaGraph(Spark[j].X / 100, Spark[j].Y / 100, r, radi, handlestar, TRUE);
+		}
+			/*DrawPixel(Spark[j].X / 100, Spark[j].Y / 100,
+				GetColor(Spark[j].Bright, Spark[j].Bright, Spark[j].Bright));*/
+
+	}
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 }
 //背景計算
 void backgrouind_Update(int x) {
@@ -196,6 +305,10 @@ void stone_Draw(Stone samp) {
 //初期化
 void Game_Initialize() {
 
+	// 火花の存在を初期化する
+	for (int i = 0; i < MAX_SPARK; i++)
+		Spark[i].Valid = 0;
+
 	bgm_Play(Bgm_Playing);
 
 	nowfaze = Gauge;
@@ -240,6 +353,7 @@ void Game_Initialize() {
 	gaugehandle[1] = LoadGraph("image/gauge_frame.png"); // 画像をロード
 	gaugehandle[2] = LoadGraph("image/gaugeback.png"); // 画像をロード
 	
+	handlestar=LoadGraph("image/star.png");
 
 	rankhandle[0] = LoadGraph("image/ranking.png"); // 画像をロード
 	rankhandle[1] = LoadGraph("image/inputname.png"); // 画像をロード
@@ -296,6 +410,7 @@ void Game_Finalize() {
 		DeleteGraph(rankhandle[i]);
 	DeleteGraph(stonehandle);
 	DeleteGraph(backhandle);
+	DeleteGraph(handlestar);
 	DeleteFontToHandle(Font00);
 	DeleteFontToHandle(Font01);
 	DeleteFontToHandle(Font02);
@@ -318,16 +433,20 @@ void Game_Update() {
 	switch (nowfaze) {
 	case Gauge:
 		gauge_Update(&gauge);
+	
+
 		break;
 	case Fly:
 		fry_Update(&stone, gauge);
+		MoveSpark();
 		break;
 	case NextPoint:
 		fry_Update(&stone, gauge);
 		timingUpdate(&stone);
+		MoveSpark();
 		break;
 	case Result:
-		
+	
 
 		if (getKey(KEY_INPUT_DOWN) == 1 && sele == 1)
 			sele = 2;
