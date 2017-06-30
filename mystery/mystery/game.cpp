@@ -213,7 +213,7 @@ void timingUpdate(Stone *samp) {
 		samp->xspeed -= 0.1*sa;
 
 		int R = sa<10?30:(sa<20)?20:10;
-		printf("%d\n", sa);
+		//printf("%d\n", sa);
 		for (int j = 0; j < R; j++)
 		{
 			// ‰Î‰Ô‚ğ¶¬

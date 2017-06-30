@@ -7,10 +7,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	se_Initialize();
 	SceneMgr_Initialize();
 	wipe_Initialize();
-	::AllocConsole();               // コマンドプロンプトが表示される
-	freopen("CON", "r", stdin);     // 標準入力の割り当て
-	freopen("CON", "w", stdout);    // 標準出力の割り当て
-	freopen("CON", "w", stderr);    // 標準エラー出力の割り当て
+	//::AllocConsole();               // コマンドプロンプトが表示される
+	//freopen("CON", "r", stdin);     // 標準入力の割り当て
+	//freopen("CON", "w", stdout);    // 標準出力の割り当て
+	//freopen("CON", "w", stderr);    // 標準エラー出力の割り当て
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0) {
 		
 		SceneMgr_Update();  //更新
@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		key_Update();
 
 		fps_Update();	//更新
-		fps_Draw();		//描画
+	//	fps_Draw();		//描画
 		fps_Wait();		//待機
 	}
 
